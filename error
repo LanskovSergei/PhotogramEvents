@@ -1,0 +1,33 @@
+import requests
+import openai
+
+
+def generate_prompt_with_fallback(fallback_data):
+    try:
+        claude_response = requests.post(
+            "https://api.claude.ai/generate",
+            json={"input": fallback_data},
+            headers={"Authorization": "Bearer YOUR_CLAUDE_API_KEY"}
+        )
+
+        if claude_response.status_code == 200:
+            claude_result = claude_response.json()
+            return claude_result["generated_prompt"]  
+        else:
+            raise Exception(f"Claude API Error: {claude_response.status_code}")
+
+    except Exception as e:
+        print(f"Error with Claude: {e}")
+        print("Switching to GPT-4 for prompt generation...")
+
+        try:
+            gpt_response = openai.Completion.create(
+                model="gpt-4",
+                prompt=fallback_data,
+                max_tokens=100
+            )
+            return gpt_response["choices"][0]["text"]
+
+        except Exception as gpt_error:
+            print(f"Error with GPT-4: {gpt_error}")
+            return "Error: Unable to generate prompt from both Claude and GPT-4."
