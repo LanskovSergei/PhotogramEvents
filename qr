@@ -1,9 +1,14 @@
 import qrcode
 
-def generate_qr(data):
-    qr = qrcode.QRCode()
-    qr.add_data(data)
-    qr.make(fit=True)
-    img = qr.make_image()
-    img.save("qr_code.png")
-    return "qr_code.png"
+
+def generate_qr(data, web=True):
+    if web:
+        qr = qrcode.QRCode()
+        qr.add_data(data)
+        qr.make(fit=True)
+        img = qr.make_image()
+        img.save("qr_code.png")
+        return "qr_code.png"
+    else:
+        pass
+    
